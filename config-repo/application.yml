@@ -20,6 +20,16 @@ spring:
     port: 5672
     username: guest
     password: guest
+    listener:
+      simple:
+        # Si un evento falla al procesarse se reintenta 3 veces (1s, 2s, 4s). Si sigue fallando
+        # no se vuelve a encolar: va a la cola .dlq del consumidor para revisarlo a mano.
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1s
+          multiplier: 2
   data:
     web:
       pageable:

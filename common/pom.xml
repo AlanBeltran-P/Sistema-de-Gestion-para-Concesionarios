@@ -34,5 +34,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
+        <!-- Solo para traducir errores de paginado/orden (?sort=campoInexistente -> 400) -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <!-- Para reconocer el error de Hibernate al ordenar por un campo inexistente en un @Query.
+             Optional: lo aporta el starter de JPA de cada servicio. -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

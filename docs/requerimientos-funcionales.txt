@@ -87,7 +87,8 @@ RF-37   Recordar una cuota próxima a vencer y avisar cuando vence
 RF-38   Guardar el historial de notificaciones enviadas
 
 
-------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------
 7. reporte-service: Reportes
 ------------------------------------------------------------------------------------------
 RF      Descripción                                                    Rol

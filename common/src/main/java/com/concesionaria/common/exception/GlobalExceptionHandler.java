@@ -1,8 +1,11 @@
 package com.concesionaria.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.sqm.UnknownPathException;
 import org.jspecify.annotations.Nullable;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -44,6 +47,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail manejarConcurrencia(OptimisticLockingFailureException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
                 "Otro usuario modificó este registro al mismo tiempo. Volvé a intentarlo.");
+    }
+
+    /** ?sort=campoQueNoExiste en consultas derivadas o Specifications. */
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ProblemDetail manejarOrdenInvalido(PropertyReferenceException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                "No se puede ordenar ni filtrar por '" + ex.getPropertyName() + "'");
+    }
+
+    /** ?sort=campoQueNoExiste en consultas @Query: Hibernate no encuentra el atributo. */
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ProblemDetail manejarUsoInvalidoDeDatos(InvalidDataAccessApiUsageException ex) {
+        for (Throwable causa = ex; causa != null && causa != causa.getCause(); causa = causa.getCause()) {
+            if (causa instanceof UnknownPathException) {
+                return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                        "No se puede ordenar por un campo que no existe");
+            }
+        }
+        return manejarErrorInesperado(ex);
     }
 
     /** Cualquier error no previsto: se loguea completo y al cliente le llega un mensaje genérico. */
