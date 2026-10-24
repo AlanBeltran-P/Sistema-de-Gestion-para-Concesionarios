@@ -1,5 +1,7 @@
 package com.concesionaria.auth.evento;
 
+import com.concesionaria.common.evento.EventoIntegracion;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 

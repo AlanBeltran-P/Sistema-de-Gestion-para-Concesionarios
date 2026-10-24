@@ -1,4 +1,4 @@
-package com.concesionaria.auth.exception;
+package com.concesionaria.common.exception;
 
 import org.springframework.http.HttpStatus;
 

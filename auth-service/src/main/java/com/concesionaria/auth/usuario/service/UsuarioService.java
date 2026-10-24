@@ -1,10 +1,10 @@
 package com.concesionaria.auth.usuario.service;
 
 import com.concesionaria.auth.evento.UsuarioRegistradoEvento;
-import com.concesionaria.auth.exception.ConflictoException;
-import com.concesionaria.auth.exception.NoAutorizadoException;
-import com.concesionaria.auth.exception.NoEncontradoException;
-import com.concesionaria.auth.exception.SolicitudInvalidaException;
+import com.concesionaria.common.exception.ConflictoException;
+import com.concesionaria.common.exception.NoAutorizadoException;
+import com.concesionaria.common.exception.NoEncontradoException;
+import com.concesionaria.common.exception.SolicitudInvalidaException;
 import com.concesionaria.auth.refreshtoken.service.RefreshTokenService;
 import com.concesionaria.auth.usuario.Usuario;
 import com.concesionaria.auth.usuario.dto.CrearEmpleadoRequest;

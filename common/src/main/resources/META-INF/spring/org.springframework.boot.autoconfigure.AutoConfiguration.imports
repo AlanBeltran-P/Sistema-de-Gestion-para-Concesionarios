@@ -1,0 +1,3 @@
+com.concesionaria.common.autoconfigure.CommonSeguridadAutoConfiguration
+com.concesionaria.common.autoconfigure.CommonWebAutoConfiguration
+com.concesionaria.common.autoconfigure.CommonEventosAutoConfiguration

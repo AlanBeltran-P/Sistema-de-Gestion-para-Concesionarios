@@ -1,4 +1,4 @@
-package com.concesionaria.auth.exception;
+package com.concesionaria.common.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

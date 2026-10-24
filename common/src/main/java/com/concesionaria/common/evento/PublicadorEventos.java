@@ -1,28 +1,23 @@
-package com.concesionaria.auth.evento;
+package com.concesionaria.common.evento;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
- * Los servicios publican eventos con ApplicationEventPublisher y acá se envían a RabbitMQ
- * recién cuando la transacción se confirma. Así nunca sale un evento de algo que
- * terminó haciendo rollback.
+ * Envía a RabbitMQ los EventoIntegracion publicados con ApplicationEventPublisher, recién
+ * cuando la transacción se confirma. Así nunca sale un evento de algo que hizo rollback.
+ * Se registra solo desde CommonEventosAutoConfiguration.
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class PublicadorEventos {
 
     private final RabbitTemplate rabbitTemplate;
-
-    @Value("${eventos.exchange}")
-    private String exchange;
+    private final String exchange;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void publicar(EventoIntegracion evento) {

@@ -3,12 +3,11 @@ package com.concesionaria.auth.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Propiedades "jwt.*" de config-repo.
+ * Duraciones de los tokens ("jwt.*" de config-repo). La clave jwt.secret la lee common.
  *
- * @param secret             clave HS256 en Base64 (mínimo 32 bytes)
  * @param accessTokenMinutos duración del access token
  * @param refreshTokenDias   duración del refresh token
  */
 @ConfigurationProperties("jwt")
-public record JwtProperties(String secret, int accessTokenMinutos, int refreshTokenDias) {
+public record JwtProperties(int accessTokenMinutos, int refreshTokenDias) {
 }

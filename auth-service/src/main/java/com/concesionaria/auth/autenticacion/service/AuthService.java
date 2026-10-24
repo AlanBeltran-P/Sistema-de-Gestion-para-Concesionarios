@@ -3,7 +3,7 @@ package com.concesionaria.auth.autenticacion.service;
 import com.concesionaria.auth.autenticacion.dto.LoginRequest;
 import com.concesionaria.auth.autenticacion.dto.RegistroRequest;
 import com.concesionaria.auth.autenticacion.dto.TokenResponse;
-import com.concesionaria.auth.exception.NoAutorizadoException;
+import com.concesionaria.common.exception.NoAutorizadoException;
 import com.concesionaria.auth.refreshtoken.service.RefreshTokenService;
 import com.concesionaria.auth.security.JwtService;
 import com.concesionaria.auth.usuario.Usuario;

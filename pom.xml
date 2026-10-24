@@ -22,6 +22,8 @@
         <module>config-server</module>
         <module>eureka-server</module>
         <module>api-gateway</module>
+        <!-- Librería compartida -->
+        <module>common</module>
         <!-- Microservicios de negocio -->
         <module>auth-service</module>
         <module>vehiculo-service</module>
@@ -39,6 +41,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.concesionaria</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>

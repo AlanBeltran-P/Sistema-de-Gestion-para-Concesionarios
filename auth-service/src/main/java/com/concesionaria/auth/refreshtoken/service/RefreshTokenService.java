@@ -1,7 +1,7 @@
 package com.concesionaria.auth.refreshtoken.service;
 
 import com.concesionaria.auth.config.JwtProperties;
-import com.concesionaria.auth.exception.NoAutorizadoException;
+import com.concesionaria.common.exception.NoAutorizadoException;
 import com.concesionaria.auth.refreshtoken.RefreshToken;
 import com.concesionaria.auth.refreshtoken.repository.RefreshTokenRepository;
 import com.concesionaria.auth.security.TokenUtils;

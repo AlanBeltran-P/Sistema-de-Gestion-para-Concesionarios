@@ -2,6 +2,7 @@ package com.concesionaria.auth.security;
 
 import com.concesionaria.auth.config.JwtProperties;
 import com.concesionaria.auth.usuario.Usuario;
+import com.concesionaria.common.security.JwtConstantes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
@@ -21,21 +22,19 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class JwtService {
 
-    public static final String ISSUER = "auth-service";
-
     private final JwtEncoder jwtEncoder;
     private final JwtProperties jwtProperties;
 
     public String generarAccessToken(Usuario usuario) {
         Instant ahora = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(ISSUER)
+                .issuer(JwtConstantes.ISSUER)
                 .subject(usuario.getId().toString())
                 .issuedAt(ahora)
                 .expiresAt(ahora.plus(duracionAccessToken()))
-                .claim("email", usuario.getEmail())
-                .claim("rol", usuario.getRol().name())
-                .claim("nombre", usuario.getNombre() + " " + usuario.getApellido())
+                .claim(JwtConstantes.CLAIM_EMAIL, usuario.getEmail())
+                .claim(JwtConstantes.CLAIM_ROL, usuario.getRol().name())
+                .claim(JwtConstantes.CLAIM_NOMBRE, usuario.getNombre() + " " + usuario.getApellido())
                 .build();
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();

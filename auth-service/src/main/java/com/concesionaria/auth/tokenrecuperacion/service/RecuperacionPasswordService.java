@@ -2,7 +2,7 @@ package com.concesionaria.auth.tokenrecuperacion.service;
 
 import com.concesionaria.auth.config.AuthProperties;
 import com.concesionaria.auth.evento.RecuperacionPasswordSolicitadaEvento;
-import com.concesionaria.auth.exception.SolicitudInvalidaException;
+import com.concesionaria.common.exception.SolicitudInvalidaException;
 import com.concesionaria.auth.refreshtoken.service.RefreshTokenService;
 import com.concesionaria.auth.security.TokenUtils;
 import com.concesionaria.auth.tokenrecuperacion.TokenRecuperacion;
