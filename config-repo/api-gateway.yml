@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: lb://auth-service
+              predicates: [ "Path=/api/auth/**,/api/usuarios/**" ]
+            - id: vehiculo-service
+              uri: lb://vehiculo-service
+              predicates: [ "Path=/api/vehiculos/**,/api/marcas/**,/api/modelos/**,/api/categorias/**" ]
+            - id: cliente-service
+              uri: lb://cliente-service
+              predicates: [ "Path=/api/clientes/**" ]
+            - id: venta-service
+              uri: lb://venta-service
+              predicates: [ "Path=/api/cotizaciones/**,/api/reservas/**,/api/ventas/**,/api/tasaciones/**" ]
+            - id: financiamiento-service
+              uri: lb://financiamiento-service
+              predicates: [ "Path=/api/planes/**,/api/financiamientos/**,/api/pagos/**" ]
+            - id: notificacion-service
+              uri: lb://notificacion-service
+              predicates: [ "Path=/api/notificaciones/**" ]
+            - id: reporte-service
+              uri: lb://reporte-service
+              predicates: [ "Path=/api/reportes/**" ]

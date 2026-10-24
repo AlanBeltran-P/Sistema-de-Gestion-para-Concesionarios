@@ -1,0 +1,25 @@
+# Configuración común a TODOS los microservicios
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update        # Hibernate crea/actualiza las tablas desde las @Entity
+    show-sql: true
+    open-in-view: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
