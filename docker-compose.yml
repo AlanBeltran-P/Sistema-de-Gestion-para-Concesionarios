@@ -1,8 +1,45 @@
-# Infraestructura local: MySQL (una base por microservicio), RabbitMQ y Mailpit (emails de prueba).
-# Levantar:  docker compose up -d
-# Bajar:     docker compose down      (agregar -v para borrar también los datos)
+# Todo el sistema en Docker: infraestructura + los 10 servicios.
+#
+#   docker compose up -d --build          levanta todo (la primera vez compila, tarda unos minutos)
+#   docker compose up -d mysql rabbitmq mailpit   solo la infraestructura (para correr los servicios
+#                                                 desde el IDE o con java -jar)
+#   docker compose logs -f venta-service  ver los logs de un servicio
+#   docker compose down                   bajar todo (agregar -v para borrar también los datos)
+#
+# Desde la máquina se usa solo el gateway (http://localhost:8080). Los servicios se encuentran
+# entre sí por nombre (mysql, rabbitmq, config-server...) dentro de la red de Docker.
+
+# ---------------------------------------------------------------- Configuración común
+x-servicio: &servicio
+  restart: unless-stopped
+  mem_limit: 768m
+  depends_on: &depende
+    config-server:
+      condition: service_healthy
+    eureka-server:
+      condition: service_healthy
+    mysql:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+
+x-entorno: &entorno
+  CONFIG_SERVER_URL: http://config-server:8888
+  EUREKA_URL: http://eureka-server:8761/eureka/
+  MYSQL_HOST: mysql
+  RABBITMQ_HOST: rabbitmq
+  MAIL_HOST: mailpit
+
+# Un servicio está sano cuando /actuator/health responde UP (la imagen no trae curl: se usa bash)
+x-salud: &salud
+  test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/$${PUERTO} && printf 'GET /actuator/health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
+  interval: 10s
+  timeout: 5s
+  retries: 18
+  start_period: 30s
 
 services:
+  # ---------------------------------------------------------------- Infraestructura
   mysql:
     image: mysql:8.4
     container_name: concesionaria-mysql
@@ -50,6 +87,111 @@ services:
       - "8025:8025"     # Panel web
     restart: unless-stopped
 
+  # ---------------------------------------------------------------- Spring Cloud
+  config-server:
+    build: { context: ., args: { MODULO: config-server } }
+    image: concesionaria/config-server
+    container_name: concesionaria-config-server
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      PUERTO: "8888"
+    volumes:
+      # Los yml se leen de la carpeta del proyecto: un cambio se toma al reiniciar el servicio
+      - ./config-repo:/app/config-repo:ro
+    healthcheck: *salud
+
+  eureka-server:
+    build: { context: ., args: { MODULO: eureka-server } }
+    image: concesionaria/eureka-server
+    container_name: concesionaria-eureka-server
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      PUERTO: "8761"
+    ports:
+      - "8761:8761"     # Panel de Eureka: http://localhost:8761
+    healthcheck: *salud
+
+  api-gateway:
+    <<: *servicio
+    build: { context: ., args: { MODULO: api-gateway } }
+    image: concesionaria/api-gateway
+    container_name: concesionaria-api-gateway
+    environment: { <<: *entorno, PUERTO: "8080" }
+    ports:
+      - "8080:8080"     # Punto de entrada: http://localhost:8080 (Swagger en /swagger-ui.html)
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck: *salud
+
+  # ---------------------------------------------------------------- Microservicios
+  auth-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: auth-service } }
+    image: concesionaria/auth-service
+    container_name: concesionaria-auth-service
+    environment: { <<: *entorno, PUERTO: "8081" }
+    healthcheck: *salud
+
+  vehiculo-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: vehiculo-service } }
+    image: concesionaria/vehiculo-service
+    container_name: concesionaria-vehiculo-service
+    environment: { <<: *entorno, PUERTO: "8082" }
+    volumes:
+      - imagenes-vehiculos:/app/uploads   # las fotos de los vehículos no se pierden al recrear el contenedor
+    healthcheck: *salud
+
+  cliente-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: cliente-service } }
+    image: concesionaria/cliente-service
+    container_name: concesionaria-cliente-service
+    environment: { <<: *entorno, PUERTO: "8083" }
+    healthcheck: *salud
+
+  venta-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: venta-service } }
+    image: concesionaria/venta-service
+    container_name: concesionaria-venta-service
+    environment: { <<: *entorno, PUERTO: "8084" }
+    healthcheck: *salud
+
+  financiamiento-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: financiamiento-service } }
+    image: concesionaria/financiamiento-service
+    container_name: concesionaria-financiamiento-service
+    environment: { <<: *entorno, PUERTO: "8085" }
+    healthcheck: *salud
+
+  notificacion-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: notificacion-service } }
+    image: concesionaria/notificacion-service
+    container_name: concesionaria-notificacion-service
+    environment: { <<: *entorno, PUERTO: "8086" }
+    depends_on:
+      <<: *depende
+      mailpit:
+        condition: service_started
+    healthcheck: *salud
+
+  reporte-service:
+    <<: *servicio
+    build: { context: ., args: { MODULO: reporte-service } }
+    image: concesionaria/reporte-service
+    container_name: concesionaria-reporte-service
+    environment: { <<: *entorno, PUERTO: "8087" }
+    healthcheck: *salud
+
 volumes:
   mysql-data:
   rabbitmq-data:
+  imagenes-vehiculos:

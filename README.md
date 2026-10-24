@@ -13,7 +13,7 @@ Los requerimientos funcionales (RF-01 a RF-42) están en
 - Spring Security con JWT (HS256), Spring Data JPA (Hibernate 7) y MySQL 8.4
 - RabbitMQ para los eventos entre servicios
 - Swagger UI (springdoc) para la documentación de la API
-- Docker Compose para la infraestructura local (MySQL, RabbitMQ y Mailpit)
+- Docker y Docker Compose: todo el sistema se levanta con un comando
 
 ## Arquitectura
 
@@ -55,28 +55,50 @@ Los requerimientos funcionales (RF-01 a RF-42) están en
 
 ## Cómo levantarlo
 
-### Requisitos
+### Opción A: todo con Docker (recomendada)
 
-- JDK 25
-- Docker Desktop
-- Los puertos 3306, 5672, 15672, 1025, 8025 y 8080 a 8087, 8761 y 8888 libres.
-  Si tenés un MySQL instalado en la máquina, frenalo: usa el mismo puerto 3306.
-
-### 1. Infraestructura
+Solo hace falta **Docker Desktop**. Si tenés un MySQL instalado en la máquina, frenalo, porque usa
+el mismo puerto 3306.
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-Levanta MySQL (crea las 7 bases y un usuario por servicio la primera vez), RabbitMQ y Mailpit.
+- **Primera vez:** compila el proyecto adentro de Docker y tarda unos minutos.
+- **Después:** con `docker compose up -d` arranca en menos de un minuto.
+- **Qué levanta:** MySQL, RabbitMQ, Mailpit, config-server, Eureka, el gateway y los 7
+  microservicios, en el orden correcto.
+- **Listo:** cuando `docker compose ps` muestra todos como `healthy`.
 
-### 2. Compilar
+| Comando | Para qué |
+|---|---|
+| `docker compose ps` | Ver el estado de cada contenedor |
+| `docker compose logs -f venta-service` | Ver los logs de un servicio |
+| `docker compose up -d --build venta-service` | Recompilar y reiniciar un servicio después de cambiar código |
+| `docker compose restart venta-service` | Reiniciar un servicio (por ejemplo, después de editar `config-repo/`) |
+| `docker compose down` | Bajar todo (los datos quedan) |
+| `docker compose down -v` | Bajar todo y borrar los datos |
+
+Desde la máquina solo se usa el gateway (http://localhost:8080). Los servicios no exponen sus
+puertos: se hablan entre sí por la red interna de Docker.
+
+### Opción B: los servicios desde el IDE o con `java -jar`
+
+Sirve para depurar un servicio. Requiere **JDK 25** y los puertos 8080 a 8087, 8761 y 8888 libres.
+
+**1. Infraestructura en Docker:**
+
+```bash
+docker compose up -d mysql rabbitmq mailpit
+```
+
+**2. Compilar:**
 
 ```bash
 ./mvnw clean install -DskipTests        # en Windows: mvnw.cmd clean install -DskipTests
 ```
 
-### 3. Arrancar los servicios (desde la raíz del proyecto, en este orden)
+**3. Arrancar los servicios** (desde la raíz del proyecto, en este orden):
 
 ```bash
 java -jar config-server/target/config-server-0.0.1-SNAPSHOT.jar
@@ -97,7 +119,7 @@ También se puede arrancar un servicio con `./mvnw -pl auth-service spring-boot:
 Después de arrancar, el gateway tarda unos segundos en ver cada servicio en Eureka. Mientras tanto
 responde 503.
 
-### 4. Probar
+### Probar
 
 Al arrancar por primera vez, auth-service crea un administrador:
 
@@ -196,6 +218,9 @@ se definen estas variables de entorno:
 | `MAIL_REMITENTE` | Remitente de los emails | `Concesionaria Demo <no-responder@concesionaria.com>` |
 | `IMAGENES_DIR` | Carpeta de las fotos de los vehículos | `uploads/vehiculos` |
 | `MYSQL_ROOT_PASSWORD` | Contraseña de root de MySQL (docker compose) | `root` |
+
+Con Docker, estas variables se agregan en el `environment` de cada servicio. Por ejemplo, en un
+`docker-compose.override.yml`, que Docker Compose lee solo y conviene no subir al repositorio.
 
 Las contraseñas de los usuarios de cada base (`<servicio>_user` / `cambiar_<servicio>`) se crean en
 `docker/mysql/init/` y se configuran en el yml de cada servicio. Hay que cambiarlas en producción.

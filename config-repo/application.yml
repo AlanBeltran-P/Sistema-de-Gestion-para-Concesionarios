@@ -2,7 +2,7 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
   instance:
     prefer-ip-address: true
 
@@ -16,7 +16,7 @@ spring:
       # Carga las colecciones LAZY de a lotes (evita una consulta por cada fila en los listados)
       hibernate.default_batch_fetch_size: 50
   rabbitmq:
-    host: localhost
+    host: ${RABBITMQ_HOST:localhost}
     port: 5672
     username: guest
     password: guest

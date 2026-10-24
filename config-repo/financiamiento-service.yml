@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/db_financiamiento
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/db_financiamiento
     username: financiamiento_user
     password: cambiar_financiamiento
 

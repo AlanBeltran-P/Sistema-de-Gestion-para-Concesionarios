@@ -40,3 +40,6 @@ build/
 
 ### Archivos subidos (imágenes de vehículos) ###
 uploads/
+
+# Configuración local de Docker (secretos de producción, etc.)
+docker-compose.override.yml

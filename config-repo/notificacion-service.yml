@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/db_notificaciones
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/db_notificaciones
     username: notificacion_user
     password: cambiar_notificacion
   # SMTP. En desarrollo es Mailpit (docker compose): los emails se ven en http://localhost:8025
