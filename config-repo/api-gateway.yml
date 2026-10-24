@@ -22,10 +22,10 @@ spring:
               predicates: [ "Path=/api/clientes/**" ]
             - id: venta-service
               uri: lb://venta-service
-              predicates: [ "Path=/api/cotizaciones/**,/api/reservas/**,/api/ventas/**,/api/tasaciones/**" ]
+              predicates: [ "Path=/api/cotizaciones/**,/api/reservas/**,/api/ventas/**,/api/tasaciones/**,/api/comisiones/**" ]
             - id: financiamiento-service
               uri: lb://financiamiento-service
-              predicates: [ "Path=/api/planes/**,/api/financiamientos/**,/api/pagos/**" ]
+              predicates: [ "Path=/api/planes/**,/api/financiamientos/**,/api/pagos/**,/api/cuotas/**" ]
             - id: notificacion-service
               uri: lb://notificacion-service
               predicates: [ "Path=/api/notificaciones/**" ]

@@ -20,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,11 +61,20 @@ public class Venta {
     @Column(nullable = false)
     private Long clienteId;
 
+    @Column(length = 160)
+    private String clienteNombre;
+
     @Column(nullable = false)
     private Long vehiculoId;
 
+    @Column(length = 200)
+    private String vehiculoDescripcion;
+
     @Column(nullable = false)
     private Long vendedorId;
+
+    @Column(length = 160)
+    private String vendedorNombre;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cotizacion_id")
@@ -114,10 +124,17 @@ public class Venta {
     /** Id del plan en financiamiento-service. */
     private Long planFinanciamientoId;
 
+    @Column(length = 80)
+    private String planNombre;
+
     private Integer cantidadCuotas;
 
     @Column(precision = 14, scale = 2)
     private BigDecimal montoFinanciado;
+
+    /** Valor de cada cuota según la simulación de financiamiento-service. */
+    @Column(precision = 14, scale = 2)
+    private BigDecimal valorCuota;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -134,6 +151,9 @@ public class Venta {
 
     /** Id del ADMIN que la anuló (RF-26). */
     private Long anuladaPorId;
+
+    @Version
+    private Long version;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

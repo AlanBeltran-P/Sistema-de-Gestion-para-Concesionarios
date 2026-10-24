@@ -14,6 +14,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,11 +51,22 @@ public class Cotizacion {
     @Column(nullable = false)
     private Long clienteId;
 
+    /** Copiado de cliente-service para los listados. */
+    @Column(length = 160)
+    private String clienteNombre;
+
     @Column(nullable = false)
     private Long vehiculoId;
 
+    /** Ej: "Toyota Corolla 2024". Copiado de vehiculo-service para los listados. */
+    @Column(length = 200)
+    private String vehiculoDescripcion;
+
     /** Null mientras ningún vendedor la tomó (cotización pedida desde el portal). */
     private Long vendedorId;
+
+    @Column(length = 160)
+    private String vendedorNombre;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -92,6 +104,9 @@ public class Cotizacion {
 
     /** Hasta cuándo es válido el precio cotizado. */
     private LocalDate fechaValidez;
+
+    @Version
+    private Long version;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

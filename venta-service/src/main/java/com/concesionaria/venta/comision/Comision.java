@@ -61,6 +61,8 @@ public class Comision {
     @Column(nullable = false, length = 15)
     private EstadoComision estado = EstadoComision.PENDIENTE;
 
+    private LocalDateTime fechaPago;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCalculo;

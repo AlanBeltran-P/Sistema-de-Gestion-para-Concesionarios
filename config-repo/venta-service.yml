@@ -6,3 +6,30 @@ spring:
     url: jdbc:mysql://localhost:3306/db_ventas
     username: venta_user
     password: cambiar_venta
+
+ventas:
+  # RF-25: % de comisión del vendedor sobre el precio final
+  comision:
+    porcentaje-nuevo: 2.5
+    porcentaje-usado: 4
+  # Descuento máximo que puede dar un VENDEDOR (% del precio). Un ADMIN no tiene límite.
+  descuento-maximo-vendedor: 15
+  cotizacion:
+    dias-validez: 7
+  tasacion:
+    dias-validez: 15
+  reserva:
+    # Seña mínima (% del precio) y vigencia de la reserva (RF-21)
+    anticipo-minimo-porcentaje: 5
+    dias-vigencia: 7
+    dias-vigencia-maximo: 30
+  # RF-24: el auto recibido por trade-in entra al inventario a valor tasado + este margen (%)
+  margen-reventa-trade-in: 20
+  # RF-22: cada cuánto se buscan reservas y cotizaciones vencidas
+  cron-vencimientos: "0 */5 * * * *"
+  # Datos que van en el encabezado del comprobante PDF (RF-27)
+  empresa:
+    nombre: Concesionaria Demo S.A.
+    cuit: 30-71234567-8
+    direccion: Av. Siempre Viva 742, CABA
+    telefono: (011) 4555-0000

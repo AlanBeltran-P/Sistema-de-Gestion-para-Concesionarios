@@ -14,6 +14,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,8 +48,14 @@ public class Reserva {
     @Column(nullable = false)
     private Long clienteId;
 
+    @Column(length = 160)
+    private String clienteNombre;
+
     @Column(nullable = false)
     private Long vehiculoId;
+
+    @Column(length = 200)
+    private String vehiculoDescripcion;
 
     /** Null si el cliente reservó desde el portal. */
     private Long vendedorId;
@@ -75,6 +82,9 @@ public class Reserva {
 
     /** Id del ADMIN que la anuló. */
     private Long anuladaPorId;
+
+    @Version
+    private Long version;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

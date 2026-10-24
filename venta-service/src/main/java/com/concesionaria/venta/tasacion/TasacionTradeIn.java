@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,6 +55,10 @@ public class TasacionTradeIn {
     @Column(nullable = false)
     private Long modeloId;
 
+    /** Ej: "Ford Ka". Copiado de vehiculo-service. */
+    @Column(length = 150)
+    private String modeloDescripcion;
+
     @Column(nullable = false)
     private Integer anio;
 
@@ -79,6 +84,9 @@ public class TasacionTradeIn {
 
     /** Id del vehículo creado en vehiculo-service cuando ingresa al inventario (RF-24). */
     private Long vehiculoIngresadoId;
+
+    @Version
+    private Long version;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
