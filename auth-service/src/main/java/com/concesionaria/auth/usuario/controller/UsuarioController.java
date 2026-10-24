@@ -6,8 +6,11 @@ import com.concesionaria.auth.usuario.dto.CrearEmpleadoRequest;
 import com.concesionaria.auth.usuario.dto.UsuarioResponse;
 import com.concesionaria.auth.usuario.enums.Rol;
 import com.concesionaria.auth.usuario.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,6 +31,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 /** Gestión de usuarios. Todo el controller es solo para ADMIN (ver SecurityConfig). */
+@Tag(name = "Usuarios", description = "Empleados, roles y activación de cuentas (RF-01, RF-06). Solo ADMIN")
 @RestController
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
@@ -36,6 +40,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     /** RF-01: registrar un empleado (ADMIN o VENDEDOR). */
+    @Operation(summary = "Crear un empleado (ADMIN o VENDEDOR)", description = "RF-01: registrar un empleado (ADMIN o VENDEDOR).\n\n**Requiere login** (cualquier rol).")
     @PostMapping
     public ResponseEntity<UsuarioResponse> crearEmpleado(@Valid @RequestBody CrearEmpleadoRequest request) {
         UsuarioResponse creado = usuarioService.crearEmpleado(request);
@@ -45,21 +50,24 @@ public class UsuarioController {
     }
 
     /** Lista paginada con filtros opcionales: ?rol=VENDEDOR&activo=true&texto=perez&page=0&size=20 */
+    @Operation(summary = "Buscar usuarios", description = "Lista paginada con filtros opcionales: ?rol=VENDEDOR&activo=true&texto=perez&page=0&size=20\n\n**Requiere login** (cualquier rol).")
     @GetMapping
     public Page<UsuarioResponse> buscar(@RequestParam(required = false) Rol rol,
                                         @RequestParam(required = false) Boolean activo,
                                         @RequestParam(required = false) String texto,
-                                        @PageableDefault(size = 20, sort = "apellido", direction = Sort.Direction.ASC)
+                                        @ParameterObject @PageableDefault(size = 20, sort = "apellido", direction = Sort.Direction.ASC)
                                         Pageable pageable) {
         return usuarioService.buscar(rol, activo, texto, pageable);
     }
 
+    @Operation(summary = "Ver un usuario", description = "**Requiere login** (cualquier rol).")
     @GetMapping("/{id}")
     public UsuarioResponse obtener(@PathVariable Long id) {
         return usuarioService.obtener(id);
     }
 
     /** RF-06 */
+    @Operation(summary = "Cambiar el rol de un usuario", description = "RF-06\n\n**Requiere login** (cualquier rol).")
     @PatchMapping("/{id}/rol")
     public UsuarioResponse cambiarRol(@PathVariable Long id,
                                       @Valid @RequestBody CambiarRolRequest request,
@@ -68,6 +76,7 @@ public class UsuarioController {
     }
 
     /** RF-06 */
+    @Operation(summary = "Activar o desactivar un usuario", description = "RF-06\n\n**Requiere login** (cualquier rol).")
     @PatchMapping("/{id}/estado")
     public UsuarioResponse cambiarEstado(@PathVariable Long id,
                                          @Valid @RequestBody CambiarEstadoRequest request,

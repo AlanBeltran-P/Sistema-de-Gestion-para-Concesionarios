@@ -2,6 +2,9 @@ package com.concesionaria.vehiculo.imagen.controller;
 
 import com.concesionaria.vehiculo.imagen.dto.ImagenResponse;
 import com.concesionaria.vehiculo.imagen.service.ImagenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
@@ -25,6 +28,7 @@ import java.net.URI;
 import java.time.Duration;
 
 /** RF-10. Ver la imagen es público; subir, borrar y elegir principal: ADMIN o VENDEDOR. */
+@Tag(name = "Imágenes de vehículos", description = "Subir, ver y eliminar fotos (RF-10)")
 @RestController
 @RequestMapping("/api/vehiculos/{vehiculoId}/imagenes")
 @RequiredArgsConstructor
@@ -33,6 +37,7 @@ public class ImagenController {
     private final ImagenService imagenService;
 
     /** multipart/form-data con el campo "archivo" (JPG, PNG o WEBP, máx. 5 MB). */
+    @Operation(summary = "Subir una foto", description = "multipart/form-data con el campo \"archivo\" (JPG, PNG o WEBP, máx. 5 MB).\n\n**Roles:** ADMIN, VENDEDOR.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<ImagenResponse> subir(@PathVariable Long vehiculoId,
@@ -42,6 +47,7 @@ public class ImagenController {
         return ResponseEntity.created(URI.create(imagen.url())).body(imagen);
     }
 
+    @Operation(summary = "Eliminar una foto", description = "**Roles:** ADMIN, VENDEDOR.")
     @DeleteMapping("/{imagenId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -49,6 +55,7 @@ public class ImagenController {
         imagenService.eliminar(vehiculoId, imagenId);
     }
 
+    @Operation(summary = "Elegir la foto principal", description = "**Roles:** ADMIN, VENDEDOR.")
     @PatchMapping("/{imagenId}/principal")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ImagenResponse marcarPrincipal(@PathVariable Long vehiculoId, @PathVariable Long imagenId) {
@@ -56,6 +63,8 @@ public class ImagenController {
     }
 
     /** Devuelve el archivo. El navegador lo puede guardar en caché un día (el archivo nunca cambia). */
+    @Operation(summary = "Descargar una foto", description = "Devuelve el archivo. El navegador lo puede guardar en caché un día (el archivo nunca cambia).\n\n**Público** (no requiere login).")
+    @SecurityRequirements
     @GetMapping("/{imagenId}/archivo")
     public ResponseEntity<Resource> archivo(@PathVariable Long vehiculoId, @PathVariable Long imagenId) {
         ImagenService.ArchivoImagen archivo = imagenService.obtenerArchivo(vehiculoId, imagenId);

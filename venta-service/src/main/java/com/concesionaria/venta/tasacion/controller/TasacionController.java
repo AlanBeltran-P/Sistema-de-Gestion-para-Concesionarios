@@ -6,8 +6,11 @@ import com.concesionaria.venta.tasacion.dto.TasacionRequest;
 import com.concesionaria.venta.tasacion.dto.TasacionResponse;
 import com.concesionaria.venta.tasacion.enums.EstadoTasacion;
 import com.concesionaria.venta.tasacion.service.TasacionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /** RF-20: solo empleados. */
+@Tag(name = "Tasaciones (trade-in)", description = "Tasación del auto usado del cliente (RF-20)")
 @RestController
 @RequestMapping("/api/tasaciones")
 @RequiredArgsConstructor
@@ -35,6 +39,7 @@ public class TasacionController {
 
     private final TasacionService tasacionService;
 
+    @Operation(summary = "Tasar el auto usado de un cliente", description = "**Roles:** ADMIN, VENDEDOR.")
     @PostMapping
     public ResponseEntity<TasacionResponse> crear(@Valid @RequestBody TasacionRequest request,
                                                   @AuthenticationPrincipal Jwt jwt) {
@@ -43,19 +48,22 @@ public class TasacionController {
                 .path("/{id}").buildAndExpand(creada.id()).toUri()).body(creada);
     }
 
+    @Operation(summary = "Buscar tasaciones", description = "**Roles:** ADMIN, VENDEDOR.")
     @GetMapping
     public Page<TasacionResponse> buscar(@RequestParam(required = false) Long clienteId,
                                          @RequestParam(required = false) EstadoTasacion estado,
-                                         @PageableDefault(size = 20, sort = "fechaTasacion",
+                                         @ParameterObject @PageableDefault(size = 20, sort = "fechaTasacion",
                                                  direction = Sort.Direction.DESC) Pageable pageable) {
         return tasacionService.buscar(clienteId, estado, pageable);
     }
 
+    @Operation(summary = "Ver una tasación", description = "**Roles:** ADMIN, VENDEDOR.")
     @GetMapping("/{id}")
     public TasacionResponse obtener(@PathVariable Long id) {
         return tasacionService.obtener(id);
     }
 
+    @Operation(summary = "Registrar si el cliente acepta o rechaza la tasación", description = "**Roles:** ADMIN, VENDEDOR.")
     @PatchMapping("/{id}/estado")
     public TasacionResponse cambiarEstado(@PathVariable Long id, @Valid @RequestBody CambiarEstadoTasacionRequest request) {
         return tasacionService.cambiarEstado(id, request.estado());

@@ -32,3 +32,57 @@ spring:
             - id: reporte-service
               uri: lb://reporte-service
               predicates: [ "Path=/api/reportes/**" ]
+            # Especificación OpenAPI de auth-service (para el Swagger UI del gateway)
+            - id: docs-auth
+              uri: lb://auth-service
+              predicates: [ "Path=/docs/auth/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+            # Especificación OpenAPI de vehiculo-service (para el Swagger UI del gateway)
+            - id: docs-vehiculos
+              uri: lb://vehiculo-service
+              predicates: [ "Path=/docs/vehiculos/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+            # Especificación OpenAPI de cliente-service (para el Swagger UI del gateway)
+            - id: docs-clientes
+              uri: lb://cliente-service
+              predicates: [ "Path=/docs/clientes/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+            # Especificación OpenAPI de venta-service (para el Swagger UI del gateway)
+            - id: docs-ventas
+              uri: lb://venta-service
+              predicates: [ "Path=/docs/ventas/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+            # Especificación OpenAPI de financiamiento-service (para el Swagger UI del gateway)
+            - id: docs-financiamiento
+              uri: lb://financiamiento-service
+              predicates: [ "Path=/docs/financiamiento/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+            # Especificación OpenAPI de notificacion-service (para el Swagger UI del gateway)
+            - id: docs-notificaciones
+              uri: lb://notificacion-service
+              predicates: [ "Path=/docs/notificaciones/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+            # Especificación OpenAPI de reporte-service (para el Swagger UI del gateway)
+            - id: docs-reportes
+              uri: lb://reporte-service
+              predicates: [ "Path=/docs/reportes/v3/api-docs" ]
+              filters: [ "SetPath=/v3/api-docs" ]
+
+# Swagger UI con todos los servicios: http://localhost:8080/swagger-ui.html (selector arriba a la derecha)
+springdoc:
+  swagger-ui:
+    urls:
+      - name: "Autenticación y usuarios"
+        url: /docs/auth/v3/api-docs
+      - name: "Inventario de vehículos"
+        url: /docs/vehiculos/v3/api-docs
+      - name: "Clientes"
+        url: /docs/clientes/v3/api-docs
+      - name: "Ventas"
+        url: /docs/ventas/v3/api-docs
+      - name: "Financiamiento y pagos"
+        url: /docs/financiamiento/v3/api-docs
+      - name: "Notificaciones"
+        url: /docs/notificaciones/v3/api-docs
+      - name: "Reportes"
+        url: /docs/reportes/v3/api-docs

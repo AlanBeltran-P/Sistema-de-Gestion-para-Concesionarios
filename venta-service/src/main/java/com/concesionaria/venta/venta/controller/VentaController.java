@@ -7,8 +7,11 @@ import com.concesionaria.venta.venta.dto.VentaResponse;
 import com.concesionaria.venta.venta.enums.EstadoVenta;
 import com.concesionaria.venta.venta.service.ComprobantePdfService;
 import com.concesionaria.venta.venta.service.VentaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,6 +35,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDate;
 
+@Tag(name = "Ventas", description = "Ventas, anulación y comprobante PDF (RF-23 a RF-27)")
 @RestController
 @RequestMapping("/api/ventas")
 @RequiredArgsConstructor
@@ -41,6 +45,7 @@ public class VentaController {
     private final ComprobantePdfService comprobantePdfService;
 
     /** RF-23 */
+    @Operation(summary = "Registrar una venta", description = "RF-23\n\n**Roles:** ADMIN, VENDEDOR.")
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<VentaResponse> registrar(@Valid @RequestBody RegistrarVentaRequest request,
@@ -51,6 +56,7 @@ public class VentaController {
     }
 
     /** RF-26 */
+    @Operation(summary = "Anular una venta", description = "RF-26\n\n**Roles:** ADMIN.")
     @PostMapping("/{id}/anular")
     @PreAuthorize("hasRole('ADMIN')")
     public VentaResponse anular(@PathVariable Long id, @Valid @RequestBody AnulacionRequest request,
@@ -59,6 +65,7 @@ public class VentaController {
     }
 
     /** ?vendedorId=&desde=2026-01-01&hasta=2026-01-31&estado=CONFIRMADA */
+    @Operation(summary = "Buscar ventas", description = "?vendedorId=&desde=2026-01-01&hasta=2026-01-31&estado=CONFIRMADA\n\n**Roles:** ADMIN, VENDEDOR.")
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'SISTEMA')")
     public Page<VentaResponse> buscar(@RequestParam(required = false) Long clienteId,
@@ -66,19 +73,21 @@ public class VentaController {
                                       @RequestParam(required = false) EstadoVenta estado,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
-                                      @PageableDefault(size = 20, sort = "fechaVenta",
+                                      @ParameterObject @PageableDefault(size = 20, sort = "fechaVenta",
                                               direction = Sort.Direction.DESC) Pageable pageable) {
         return ventaService.buscar(clienteId, vendedorId, estado, desde, hasta, pageable);
     }
 
+    @Operation(summary = "Mis compras", description = "**Roles:** CLIENTE.")
     @GetMapping("/mias")
     @PreAuthorize("hasRole('CLIENTE')")
     public Page<VentaResponse> mias(@AuthenticationPrincipal Jwt jwt,
-                                    @PageableDefault(size = 20, sort = "fechaVenta",
+                                    @ParameterObject @PageableDefault(size = 20, sort = "fechaVenta",
                                             direction = Sort.Direction.DESC) Pageable pageable) {
         return ventaService.delCliente(UsuarioActual.desde(jwt), pageable);
     }
 
+    @Operation(summary = "Ver una venta", description = "**Roles:** ADMIN, VENDEDOR, CLIENTE.")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'CLIENTE')")
     public VentaResponse obtener(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
@@ -86,6 +95,7 @@ public class VentaController {
     }
 
     /** RF-27: contrato / comprobante en PDF. El cliente puede bajar el de sus compras. */
+    @Operation(summary = "Descargar el comprobante en PDF", description = "RF-27: contrato / comprobante en PDF. El cliente puede bajar el de sus compras.\n\n**Roles:** ADMIN, VENDEDOR, CLIENTE.")
     @GetMapping("/{id}/comprobante")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'CLIENTE')")
     public ResponseEntity<byte[]> comprobante(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {

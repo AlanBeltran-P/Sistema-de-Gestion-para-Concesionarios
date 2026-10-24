@@ -6,3 +6,8 @@ spring:
     url: jdbc:mysql://localhost:3306/db_clientes
     username: cliente_user
     password: cambiar_cliente
+
+# Documentación de la API (Swagger UI)
+openapi:
+  titulo: "Clientes"
+  descripcion: "Clientes del local, perfil del portal e historial del cliente."

@@ -37,6 +37,8 @@
     <properties>
         <java.version>25</java.version>
         <spring-cloud.version>2025.1.4</spring-cloud.version>
+        <springdoc.version>3.1.1</springdoc.version>
+        <therapi.version>0.15.0</therapi.version>
     </properties>
 
     <dependencyManagement>
@@ -45,6 +47,23 @@
                 <groupId>com.concesionaria</groupId>
                 <artifactId>common</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <!-- Documentación de la API (Swagger UI) -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <!-- Los comentarios Javadoc de los controllers aparecen como descripción en Swagger -->
+            <dependency>
+                <groupId>com.github.therapi</groupId>
+                <artifactId>therapi-runtime-javadoc</artifactId>
+                <version>${therapi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -76,6 +95,12 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
+                            </path>
+                            <!-- Guarda los Javadoc en el jar para que springdoc los muestre -->
+                            <path>
+                                <groupId>com.github.therapi</groupId>
+                                <artifactId>therapi-runtime-javadoc-scribe</artifactId>
+                                <version>${therapi.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>

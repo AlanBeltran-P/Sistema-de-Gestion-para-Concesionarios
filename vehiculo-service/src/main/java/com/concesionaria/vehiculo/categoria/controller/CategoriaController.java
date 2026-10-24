@@ -5,6 +5,9 @@ import com.concesionaria.common.security.UsuarioActual;
 import com.concesionaria.vehiculo.categoria.dto.CategoriaRequest;
 import com.concesionaria.vehiculo.categoria.dto.CategoriaResponse;
 import com.concesionaria.vehiculo.categoria.service.CategoriaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 
 /** RF-07. Lectura pública; alta, edición y activación solo ADMIN. */
+@Tag(name = "Categorías", description = "SUV, sedán, pickup... (RF-07)")
 @RestController
 @RequestMapping("/api/categorias")
 @RequiredArgsConstructor
@@ -33,6 +37,8 @@ public class CategoriaController {
     private final CategoriaService categoriaService;
 
     /** Por defecto solo las activas. ?incluirInactivas=true funciona solo para ADMIN. */
+    @Operation(summary = "Listar categorías", description = "Por defecto solo las activas. ?incluirInactivas=true funciona solo para ADMIN.\n\n**Público** (no requiere login).")
+    @SecurityRequirements
     @GetMapping
     public List<CategoriaResponse> listar(@RequestParam(defaultValue = "false") boolean incluirInactivas,
                                           @AuthenticationPrincipal Jwt jwt) {
@@ -40,11 +46,14 @@ public class CategoriaController {
         return categoriaService.listar(incluirInactivas && esAdmin);
     }
 
+    @Operation(summary = "Ver una categoría", description = "**Público** (no requiere login).")
+    @SecurityRequirements
     @GetMapping("/{id}")
     public CategoriaResponse obtener(@PathVariable Long id) {
         return categoriaService.obtener(id);
     }
 
+    @Operation(summary = "Crear una categoría", description = "**Roles:** ADMIN.")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoriaResponse> crear(@Valid @RequestBody CategoriaRequest request) {
@@ -53,12 +62,14 @@ public class CategoriaController {
                 .path("/{id}").buildAndExpand(creada.id()).toUri()).body(creada);
     }
 
+    @Operation(summary = "Editar una categoría", description = "**Roles:** ADMIN.")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public CategoriaResponse actualizar(@PathVariable Long id, @Valid @RequestBody CategoriaRequest request) {
         return categoriaService.actualizar(id, request);
     }
 
+    @Operation(summary = "Activar o desactivar una categoría", description = "**Roles:** ADMIN.")
     @PatchMapping("/{id}/estado")
     @PreAuthorize("hasRole('ADMIN')")
     public CategoriaResponse cambiarActivo(@PathVariable Long id, @Valid @RequestBody CambiarActivoRequest request) {

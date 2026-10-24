@@ -34,6 +34,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
+        <!-- Swagger UI en cada servicio (/swagger-ui.html) y especificación OpenAPI (/v3/api-docs) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.therapi</groupId>
+            <artifactId>therapi-runtime-javadoc</artifactId>
+        </dependency>
         <!-- Solo para traducir errores de paginado/orden (?sort=campoInexistente -> 400) -->
         <dependency>
             <groupId>org.springframework.data</groupId>

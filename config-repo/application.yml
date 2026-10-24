@@ -56,6 +56,14 @@ jwt:
 eventos:
   exchange: concesionaria.eventos
 
+# Swagger UI: cada servicio en /swagger-ui.html; todos juntos en el gateway
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method
+    persist-authorization: true   # el token pegado en "Authorize" no se pierde al recargar
+  default-produces-media-type: application/json
+
 management:
   endpoints:
     web:

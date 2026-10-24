@@ -19,3 +19,8 @@ auth:
     password: ${ADMIN_PASSWORD:Admin12345}
     nombre: Administrador
     apellido: General
+
+# Documentación de la API (Swagger UI)
+openapi:
+  titulo: "Autenticación y usuarios"
+  descripcion: "Login con JWT (access + refresh token), registro de clientes, recuperación de contraseña y gestión de empleados."

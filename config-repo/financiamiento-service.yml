@@ -12,3 +12,8 @@ financiamiento:
   cron-vencimientos: "0 0 1 * * *"
   # Con cuántos días de anticipación se recuerda una cuota (RF-37)
   dias-aviso-vencimiento: 3
+
+# Documentación de la API (Swagger UI)
+openapi:
+  titulo: "Financiamiento y pagos"
+  descripcion: "Planes, simulador de cuotas, cronogramas, pagos, estado de cuenta y mora."

@@ -33,3 +33,8 @@ ventas:
     cuit: 30-71234567-8
     direccion: Av. Siempre Viva 742, CABA
     telefono: (011) 4555-0000
+
+# Documentación de la API (Swagger UI)
+openapi:
+  titulo: "Ventas"
+  descripcion: "Cotizaciones, tasaciones de trade-in, reservas, ventas, comisiones y comprobante PDF."

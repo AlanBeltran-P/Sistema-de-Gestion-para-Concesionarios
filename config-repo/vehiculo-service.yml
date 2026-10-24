@@ -16,3 +16,8 @@ vehiculos:
     # Carpeta donde se guardan las fotos (relativa a donde se arranca el servicio)
     directorio: ${IMAGENES_DIR:uploads/vehiculos}
     max-por-vehiculo: 10
+
+# Documentación de la API (Swagger UI)
+openapi:
+  titulo: "Inventario de vehículos"
+  descripcion: "Marcas, modelos, categorías, vehículos, imágenes y catálogo público."

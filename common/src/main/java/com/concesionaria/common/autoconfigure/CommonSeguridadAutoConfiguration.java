@@ -44,8 +44,11 @@ import java.util.Base64;
 @EnableMethodSecurity
 public class CommonSeguridadAutoConfiguration {
 
-    /** Rutas abiertas en cualquier servicio. */
-    public static final String[] RUTAS_PUBLICAS_BASE = {"/actuator/health/**", "/actuator/info", "/error"};
+    /** Rutas abiertas en cualquier servicio (salud y documentación de la API). */
+    public static final String[] RUTAS_PUBLICAS_BASE = {
+            "/actuator/health/**", "/actuator/info", "/error",
+            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
+    };
 
     @Bean
     @ConditionalOnMissingBean

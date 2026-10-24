@@ -51,6 +51,10 @@ public class SecurityConfig {
             "/api/categorias/**"
     };
 
+    private static final String[] DOCUMENTACION = {
+            "/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/v3/api-docs/**", "/docs/*/v3/api-docs"
+    };
+
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
@@ -66,6 +70,8 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/api/planes", "/api/planes/*").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/planes/simulacion").permitAll()
                         .pathMatchers("/actuator/health/**", "/actuator/info").permitAll()
+                        // Documentación de la API (Swagger UI y la especificación de cada servicio)
+                        .pathMatchers(HttpMethod.GET, DOCUMENTACION).permitAll()
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(o -> o.jwt(Customizer.withDefaults()))
                 .build();
