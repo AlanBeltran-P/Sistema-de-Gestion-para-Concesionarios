@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+# Orígenes del frontend que pueden llamar a la API desde el navegador (separados por coma)
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:5173}
+
 spring:
   cloud:
     gateway:

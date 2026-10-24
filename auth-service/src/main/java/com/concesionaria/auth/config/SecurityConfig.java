@@ -1,5 +1,6 @@
 package com.concesionaria.auth.config;
 
+import com.concesionaria.auth.security.JwtService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -42,7 +44,7 @@ public class SecurityConfig {
     };
 
     @Bean
-SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -56,7 +58,7 @@ SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     }
 
     @Bean
-SecretKey jwtSecretKey(JwtProperties props) {
+    SecretKey jwtSecretKey(JwtProperties props) {
         byte[] clave = Base64.getDecoder().decode(props.secret());
         if (clave.length < 32) {
             throw new IllegalStateException("jwt.secret debe tener al menos 32 bytes (256 bits) para HS256");
@@ -65,17 +67,22 @@ SecretKey jwtSecretKey(JwtProperties props) {
     }
 
     @Bean
-JwtEncoder jwtEncoder(SecretKey jwtSecretKey) {
+    JwtEncoder jwtEncoder(SecretKey jwtSecretKey) {
         return NimbusJwtEncoder.withSecretKey(jwtSecretKey).algorithm(MacAlgorithm.HS256).build();
     }
 
     @Bean
-JwtDecoder jwtDecoder(SecretKey jwtSecretKey) {
-        return NimbusJwtDecoder.withSecretKey(jwtSecretKey).macAlgorithm(MacAlgorithm.HS256).build();
+    JwtDecoder jwtDecoder(SecretKey jwtSecretKey) {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
+        // Valida firma, vencimiento y que lo haya emitido este servicio
+        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(JwtService.ISSUER));
+        return decoder;
     }
 
     @Bean
-PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
