@@ -14,6 +14,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -85,6 +86,9 @@ public class Cuota {
     @Builder.Default
     @Column(nullable = false)
     private boolean recordatorioEnviado = false;
+
+    @Version
+    private Long version;
 
     @UpdateTimestamp
     private LocalDateTime fechaActualizacion;

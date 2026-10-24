@@ -6,3 +6,9 @@ spring:
     url: jdbc:mysql://localhost:3306/db_financiamiento
     username: financiamiento_user
     password: cambiar_financiamiento
+
+financiamiento:
+  # Job diario que marca cuotas vencidas, calcula la mora y manda recordatorios (RF-33, RF-37)
+  cron-vencimientos: "0 0 1 * * *"
+  # Con cuántos días de anticipación se recuerda una cuota (RF-37)
+  dias-aviso-vencimiento: 3
