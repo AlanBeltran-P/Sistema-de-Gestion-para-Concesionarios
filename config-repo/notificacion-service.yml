@@ -6,3 +6,22 @@ spring:
     url: jdbc:mysql://localhost:3306/db_notificaciones
     username: notificacion_user
     password: cambiar_notificacion
+  # SMTP. En desarrollo es Mailpit (docker compose): los emails se ven en http://localhost:8025
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
+
+notificaciones:
+  remitente: ${MAIL_REMITENTE:Concesionaria Demo <no-responder@concesionaria.com>}
+  empresa: Concesionaria Demo
+  # Dirección del frontend: el link de recuperación de contraseña apunta acá
+  url-frontend: ${FRONTEND_URL:http://localhost:4200}
+  # Reintento de los emails que fallaron (cada 5 minutos, hasta 5 intentos)
+  max-intentos: 5
+  cron-reintentos: "0 */5 * * * *"

@@ -1,4 +1,4 @@
-# Infraestructura local: MySQL (una base por microservicio) y RabbitMQ.
+# Infraestructura local: MySQL (una base por microservicio), RabbitMQ y Mailpit (emails de prueba).
 # Levantar:  docker compose up -d
 # Bajar:     docker compose down      (agregar -v para borrar también los datos)
 
@@ -38,6 +38,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
+
+  # Servidor SMTP de desarrollo: notificacion-service le manda los emails y Mailpit los guarda
+  # sin enviarlos de verdad. Para verlos: http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    container_name: concesionaria-mailpit
+    ports:
+      - "1025:1025"     # SMTP
+      - "8025:8025"     # Panel web
     restart: unless-stopped
 
 volumes:
