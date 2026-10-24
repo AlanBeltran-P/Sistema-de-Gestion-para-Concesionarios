@@ -17,6 +17,21 @@ spring:
     port: 5672
     username: guest
     password: guest
+  data:
+    web:
+      pageable:
+        serialization-mode: via-dto   # Page<T> se devuelve con un JSON estable (content + page)
+        max-page-size: 100
+
+# JWT firmado con HS256. auth-service lo emite; el api-gateway y los servicios lo validan.
+# La clave de abajo es solo para desarrollo: en producción definir la variable JWT_SECRET.
+jwt:
+  secret: ${JWT_SECRET:a0bfJXOAl4cblbzfULdXzo6qDwDDpulPfIpEE5x9V7QGRsQtY18uOSiB5X/ZNk3h6/VwHEmycAasT+vBNzIyLg==}
+  access-token-minutos: 15
+
+# Exchange de RabbitMQ (tipo topic) donde todos los servicios publican sus eventos
+eventos:
+  exchange: concesionaria.eventos
 
 management:
   endpoints:

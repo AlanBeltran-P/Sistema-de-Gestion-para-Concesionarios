@@ -33,7 +33,8 @@ public class TokenRecuperacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    /** Hash SHA-256 del token (ver TokenUtils). El token en texto plano solo viaja en el email. */
+    @Column(nullable = false, unique = true, length = 64)
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
