@@ -57,9 +57,9 @@ public class VehiculoController {
         return vehiculoService.obtener(id, esEmpleado(jwt));
     }
 
-    /** RF-08 */
+    /** RF-08. SISTEMA: venta-service da de alta el auto recibido por trade-in (RF-24). */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'SISTEMA')")
     public ResponseEntity<VehiculoResponse> crear(@Valid @RequestBody CrearVehiculoRequest request) {
         VehiculoResponse creado = vehiculoService.crear(request);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
@@ -73,25 +73,25 @@ public class VehiculoController {
         return vehiculoService.actualizar(id, request);
     }
 
-    /** RF-11 */
+    /** RF-11. SISTEMA: venta-service al reservar, vender, anular o vencer una reserva. */
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'SISTEMA')")
     public VehiculoResponse cambiarEstado(@PathVariable Long id,
                                           @Valid @RequestBody CambiarEstadoVehiculoRequest request,
                                           @AuthenticationPrincipal Jwt jwt) {
-        return vehiculoService.cambiarEstado(id, request.estado(), UsuarioActual.desde(jwt));
+        return vehiculoService.cambiarEstado(id, request.estado(), request.estadoEsperado(), UsuarioActual.desde(jwt));
     }
 
-    /** RF-09: baja lógica. */
+    /** RF-09: baja lógica. SISTEMA: venta-service al anular una venta con trade-in. */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SISTEMA')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void darDeBaja(@PathVariable Long id) {
         vehiculoService.darDeBaja(id);
     }
 
     @PostMapping("/{id}/reactivar")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SISTEMA')")
     public VehiculoResponse reactivar(@PathVariable Long id) {
         return vehiculoService.reactivar(id);
     }

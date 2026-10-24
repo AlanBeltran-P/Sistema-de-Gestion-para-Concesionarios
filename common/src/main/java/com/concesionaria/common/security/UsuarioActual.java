@@ -32,8 +32,13 @@ public record UsuarioActual(Long id, String email, String rol, String nombre) {
         return "CLIENTE".equals(rol);
     }
 
-    /** ADMIN o VENDEDOR. */
+    /** Otro microservicio (token de servicio, ver TokenServicio). */
+    public boolean esSistema() {
+        return JwtConstantes.ROL_SISTEMA.equals(rol);
+    }
+
+    /** ADMIN o VENDEDOR. Un servicio interno ve lo mismo que un empleado. */
     public boolean esEmpleado() {
-        return esAdmin() || esVendedor();
+        return esAdmin() || esVendedor() || esSistema();
     }
 }

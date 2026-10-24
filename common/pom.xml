@@ -46,5 +46,17 @@
             <artifactId>hibernate-core</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- Token de servicio y traducción de errores para los servicios que usan Feign.
+             Optional: lo aporta spring-cloud-starter-openfeign de cada servicio. -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-core</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

@@ -3,6 +3,7 @@ package com.concesionaria.cliente.cliente.controller;
 import com.concesionaria.cliente.cliente.dto.ClienteRequest;
 import com.concesionaria.cliente.cliente.dto.ClienteResponse;
 import com.concesionaria.cliente.cliente.dto.PerfilRequest;
+import com.concesionaria.cliente.cliente.dto.UsuarioPortalRequest;
 import com.concesionaria.cliente.cliente.enums.OrigenCliente;
 import com.concesionaria.cliente.cliente.service.ClienteService;
 import com.concesionaria.common.security.UsuarioActual;
@@ -44,11 +45,22 @@ public class ClienteController {
         return clienteService.buscar(texto, origen, pageable);
     }
 
-    /** RF-16 */
+    /** RF-16. SISTEMA: venta-service y financiamiento-service consultan los datos del cliente. */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'SISTEMA')")
     public ClienteResponse obtener(@PathVariable Long id) {
         return clienteService.obtener(id);
+    }
+
+    /**
+     * Uso interno: el perfil del usuario logueado en el portal (ej: venta-service cuando un cliente
+     * pide una cotización). Si todavía no existe se crea, igual que en GET /me.
+     */
+    @PostMapping("/portal")
+    @PreAuthorize("hasRole('SISTEMA')")
+    public ClienteResponse obtenerOCrearDelPortal(@Valid @RequestBody UsuarioPortalRequest request) {
+        return clienteService.perfilPropio(
+                new UsuarioActual(request.usuarioId(), request.email(), "CLIENTE", request.nombre()));
     }
 
     /** RF-14: cliente que viene al local, sin cuenta. */

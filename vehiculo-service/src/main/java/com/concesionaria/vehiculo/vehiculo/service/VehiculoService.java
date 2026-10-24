@@ -120,19 +120,24 @@ public class VehiculoService {
      * Si dos pedidos cambian el mismo vehículo a la vez, el segundo falla con 409 (@Version).
      */
     @Transactional
-    public VehiculoResponse cambiarEstado(Long id, EstadoVehiculo nuevoEstado, UsuarioActual usuario) {
+    public VehiculoResponse cambiarEstado(Long id, EstadoVehiculo nuevoEstado, EstadoVehiculo estadoEsperado,
+                                          UsuarioActual usuario) {
         Vehiculo vehiculo = buscarDetalle(id);
         if (!vehiculo.isActivo()) {
             throw new ConflictoException("El vehículo está dado de baja");
         }
         EstadoVehiculo actual = vehiculo.getEstado();
+        if (estadoEsperado != null && actual != estadoEsperado) {
+            throw new ConflictoException("El vehículo está " + actual);
+        }
         if (actual == nuevoEstado) {
             return VehiculoResponse.desde(vehiculo);
         }
         if (!actual.puedePasarA(nuevoEstado)) {
             throw new ConflictoException("No se puede pasar de " + actual + " a " + nuevoEstado);
         }
-        if (actual == EstadoVehiculo.VENDIDO && !usuario.esAdmin()) {
+        // SISTEMA: venta-service, cuando un ADMIN anula la venta (RF-26)
+        if (actual == EstadoVehiculo.VENDIDO && !usuario.esAdmin() && !usuario.esSistema()) {
             throw new AccesoDenegadoException("Solo un ADMIN puede volver a poner disponible un vehículo vendido");
         }
         vehiculo.setEstado(nuevoEstado);

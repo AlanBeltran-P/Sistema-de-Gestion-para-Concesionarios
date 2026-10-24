@@ -30,6 +30,16 @@ spring:
           max-attempts: 3
           initial-interval: 1s
           multiplier: 2
+  cloud:
+    openfeign:
+      http2client:
+        enabled: true   # usa feign-java11 (java.net.http) en los servicios que lo tienen
+      client:
+        config:
+          # Llamadas entre servicios (Feign): si el otro no responde, se corta rápido con 503
+          default:
+            connect-timeout: 2000
+            read-timeout: 5000
   data:
     web:
       pageable:
