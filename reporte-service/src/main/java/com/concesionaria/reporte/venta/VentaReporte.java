@@ -96,4 +96,7 @@ public class VentaReporte {
     private LocalDateTime fechaVenta;
 
     private LocalDateTime fechaAnulacion;
+
+    /** Fecha del último evento aplicado: si llega uno más viejo (fuera de orden) se ignora. */
+    private LocalDateTime ultimaActualizacion;
 }

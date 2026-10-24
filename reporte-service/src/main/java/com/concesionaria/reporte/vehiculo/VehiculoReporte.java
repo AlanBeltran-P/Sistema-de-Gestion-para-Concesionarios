@@ -70,4 +70,7 @@ public class VehiculoReporte {
     private LocalDateTime fechaIngreso;
 
     private LocalDateTime fechaVenta;
+
+    /** Fecha del último evento aplicado: si llega uno más viejo (fuera de orden) se ignora. */
+    private LocalDateTime ultimaActualizacion;
 }

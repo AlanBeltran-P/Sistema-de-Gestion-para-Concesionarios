@@ -15,6 +15,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Copia de las cuotas armada con los eventos de financiamiento-service.
@@ -64,7 +65,12 @@ public class CuotaReporte {
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal montoPagado = BigDecimal.ZERO;
 
-    /** PENDIENTE, PAGADA_PARCIAL, PAGADA o VENCIDA. */
+    /** Lo que falta pagar (monto + mora - pagado). */
+    @Builder.Default
+    @Column(nullable = false, precision = 14, scale = 2)
+    private BigDecimal saldo = BigDecimal.ZERO;
+
+    /** PENDIENTE, PAGADA_PARCIAL, PAGADA, VENCIDA o ANULADA. */
     @Column(nullable = false, length = 15)
     private String estado;
 
@@ -72,4 +78,7 @@ public class CuotaReporte {
     private LocalDate fechaVencimiento;
 
     private LocalDate fechaPago;
+
+    /** Fecha del último evento aplicado: si llega uno más viejo (fuera de orden) se ignora. */
+    private LocalDateTime ultimaActualizacion;
 }
