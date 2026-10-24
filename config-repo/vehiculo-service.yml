@@ -6,3 +6,13 @@ spring:
     url: jdbc:mysql://localhost:3306/db_vehiculos
     username: vehiculo_user
     password: cambiar_vehiculo
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+vehiculos:
+  imagenes:
+    # Carpeta donde se guardan las fotos (relativa a donde se arranca el servicio)
+    directorio: ${IMAGENES_DIR:uploads/vehiculos}
+    max-por-vehiculo: 10

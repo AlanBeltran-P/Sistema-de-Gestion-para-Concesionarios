@@ -37,3 +37,6 @@ build/
 
 ### OS ###
 .DS_Store
+
+### Archivos subidos (imágenes de vehículos) ###
+uploads/

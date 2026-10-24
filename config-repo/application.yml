@@ -12,6 +12,9 @@ spring:
       ddl-auto: update        # Hibernate crea/actualiza las tablas desde las @Entity
     show-sql: true
     open-in-view: false
+    properties:
+      # Carga las colecciones LAZY de a lotes (evita una consulta por cada fila en los listados)
+      hibernate.default_batch_fetch_size: 50
   rabbitmq:
     host: localhost
     port: 5672
