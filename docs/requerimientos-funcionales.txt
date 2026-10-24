@@ -1,0 +1,111 @@
+==========================================================================================
+  SISTEMA DE GESTIÓN DE CONCESIONARIA - REQUERIMIENTOS FUNCIONALES
+==========================================================================================
+
+Roles: ADMIN, VENDEDOR, CLIENTE
+
+
+------------------------------------------------------------------------------------------
+1. auth-service: Autenticación y Usuarios
+------------------------------------------------------------------------------------------
+RF      Descripción                                                    Rol
+RF-01   Registrar empleados (admin y vendedores)                       ADMIN
+RF-02   Auto-registrarse como cliente en el portal                     Público
+RF-03   Iniciar sesión y obtener un JWT (access + refresh token)       Todos
+RF-04   Cerrar sesión e invalidar el refresh token                     Todos
+RF-05   Recuperar contraseña por email y cambiarla                     Todos
+RF-06   Asignar roles y activar o desactivar usuarios                  ADMIN
+
+
+------------------------------------------------------------------------------------------
+2. vehiculo-service: Inventario
+------------------------------------------------------------------------------------------
+RF      Descripción                                                    Rol
+RF-07   Gestionar marcas, modelos y categorías (SUV, sedán, pickup…)   ADMIN
+RF-08   Registrar vehículos: VIN, marca, modelo, año, color, km,       ADMIN, VENDEDOR
+        precio, condición (nuevo o usado)
+RF-09   Editar y dar de baja vehículos                                 ADMIN
+RF-10   Subir y eliminar imágenes del vehículo                         ADMIN, VENDEDOR
+RF-11   Gestionar el estado: Disponible -> Reservado -> Vendido        Sistema / VENDEDOR
+RF-12   Ver el catálogo público con filtros (marca, precio, año,       Público
+        categoría, condición)
+RF-13   Ver el detalle de un vehículo                                  Público
+
+
+------------------------------------------------------------------------------------------
+3. cliente-service: Clientes
+------------------------------------------------------------------------------------------
+RF      Descripción                                                    Rol
+RF-14   Registrar clientes desde el local (sin cuenta)                 VENDEDOR
+RF-15   Completar o editar el perfil propio (documento, teléfono,      CLIENTE
+        dirección)
+RF-16   Buscar y consultar clientes                                    ADMIN, VENDEDOR
+RF-17   Ver el historial del cliente (cotizaciones, compras, pagos)    VENDEDOR, CLIENTE (el propio)
+
+
+------------------------------------------------------------------------------------------
+4. venta-service: Ventas
+------------------------------------------------------------------------------------------
+RF      Descripción                                                    Rol
+RF-18   Solicitar una cotización desde el portal                       CLIENTE
+RF-19   Crear o responder cotizaciones con descuentos                  VENDEDOR
+RF-20   Tasar un vehículo usado del cliente como parte de pago         VENDEDOR
+        (trade-in)
+RF-21   Reservar un vehículo con anticipo (con fecha de vencimiento)   VENDEDOR, CLIENTE
+RF-22   Liberar la reserva automáticamente si vence                    Sistema
+RF-23   Registrar la venta: contado, financiada o con trade-in         VENDEDOR
+RF-24   Ingresar el auto recibido por trade-in al inventario como      Sistema
+        usado
+RF-25   Calcular la comisión del vendedor                              Sistema
+RF-26   Anular una venta o reserva                                     ADMIN
+RF-27   Generar el contrato o comprobante en PDF                       VENDEDOR
+
+
+------------------------------------------------------------------------------------------
+5. financiamiento-service: Financiamiento y Pagos
+------------------------------------------------------------------------------------------
+RF      Descripción                                                    Rol
+RF-28   Gestionar planes de financiamiento (tasa, plazos, % de         ADMIN
+        anticipo mínimo)
+RF-29   Simular cuotas                                                 Público / VENDEDOR
+RF-30   Generar el cronograma de cuotas al confirmar una venta         Sistema
+        financiada
+RF-31   Registrar pagos de cuotas y del anticipo                       VENDEDOR
+RF-32   Consultar el estado de cuenta y las cuotas pendientes o        CLIENTE, VENDEDOR
+        vencidas
+RF-33   Marcar cuotas como vencidas y aplicar mora                     Sistema (job programado)
+
+
+------------------------------------------------------------------------------------------
+6. notificacion-service: Notificaciones (solo eventos, vía RabbitMQ)
+------------------------------------------------------------------------------------------
+RF      Descripción
+RF-34   Enviar un email de bienvenida y de recuperación de contraseña
+RF-35   Enviar un email cuando se responde una cotización
+RF-36   Enviar un email al confirmar una reserva o una venta
+RF-37   Recordar una cuota próxima a vencer y avisar cuando vence
+RF-38   Guardar el historial de notificaciones enviadas
+
+
+------------------------------------------------------------------------------------------
+7. reporte-service: Reportes
+------------------------------------------------------------------------------------------
+RF      Descripción                                                    Rol
+RF-39   Reporte de ventas por período y por vendedor                   ADMIN
+RF-40   Reporte de inventario por estado y antigüedad en stock         ADMIN
+RF-41   Reporte de cartera: cuotas cobradas, pendientes y morosos      ADMIN
+RF-42   Dashboard de KPIs: ingresos, unidades vendidas, top modelos    ADMIN
+        y comisiones
+
+
+==========================================================================================
+  BASES DE DATOS (una por microservicio)
+==========================================================================================
+Microservicio             Base de datos
+auth-service              db_auth
+vehiculo-service          db_vehiculos
+cliente-service           db_clientes
+venta-service             db_ventas
+financiamiento-service    db_financiamiento
+notificacion-service      db_notificaciones
+reporte-service           db_reportes (se alimenta de eventos)
