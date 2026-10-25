@@ -53,6 +53,16 @@ Los requerimientos funcionales (RF-01 a RF-42) están en
 | notificacion-service | 8086 | Emails por eventos e historial | 34–38 |
 | reporte-service | 8087 | Reportes y dashboard | 39–42 |
 
+## Frontend
+
+El frontend (Angular) está en otro repositorio:
+[Concesionarios-frontend](https://github.com/AlanBeltran-P/Concesionarios-frontend). Tiene el sitio
+público con el catálogo, la cuenta del cliente y el panel de gestión para los empleados.
+
+Para levantar backend y frontend juntos, las dos carpetas van una al lado de la otra dentro de
+`Concesionaria-System/`, y el `docker-compose.yml` de esa carpeta incluye este compose y suma el
+frontend en http://localhost:4200. Los pasos están en el README del frontend.
+
 ## Cómo levantarlo
 
 ### Opción A: todo con Docker (recomendada)
