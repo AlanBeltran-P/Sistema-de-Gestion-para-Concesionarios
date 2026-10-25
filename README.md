@@ -149,6 +149,36 @@ curl -X POST http://localhost:8080/api/auth/login \
 curl http://localhost:8080/api/usuarios -H "Authorization: Bearer <accessToken>"
 ```
 
+### Datos de ejemplo
+
+Con la base recién creada, el sistema solo tiene al administrador. Para recorrerlo con contenido hay
+un script que carga datos de ejemplo usando la API. Necesita Python 3 y no usa paquetes extra:
+
+```bash
+python datos-demo/cargar_datos.py
+```
+
+Espera a que el sistema termine de arrancar y tarda alrededor de un minuto. Carga lo siguiente:
+
+- 16 vehículos con 3 fotos cada uno.
+- 4 marcas, 10 modelos y 2 planes de financiación.
+- 2 vendedores y 11 clientes.
+- 6 ventas, 4 de ellas financiadas y con cuotas pagadas.
+- 2 reservas con seña y 4 cotizaciones abiertas.
+
+| Rol | Email | Contraseña |
+|---|---|---|
+| Vendedor | `vera.gomez@concesionaria.com` | `Vendedor12345` |
+| Vendedor | `bruno.diaz@concesionaria.com` | `Vendedor12345` |
+| Cliente | `cliente.demo@mail.com` | `Cliente12345` |
+
+El cliente demo tiene el perfil completo, una compra financiada en 24 cuotas (3 pagadas), una
+cotización respondida que puede reservar a ese precio y otra pendiente.
+
+El script se corre una sola vez: si los datos ya están cargados, avisa y no hace nada. Para empezar
+de cero, `docker compose down -v`, `docker compose up -d` y volver a correrlo. Las fotos son de
+Wikimedia Commons; los autores y las licencias están en `datos-demo/fotos/CREDITOS.md`.
+
 ## Direcciones útiles
 
 | Qué | URL |
